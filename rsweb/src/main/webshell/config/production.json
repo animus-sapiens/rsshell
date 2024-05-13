@@ -1,0 +1,7 @@
+/* When $NODE_ENV=production */
+{
+  "server": {
+    "host": "SOME_PROD_PORT",
+    "port": "SOME_PROD_HOST"
+  }
+}

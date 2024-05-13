@@ -1,0 +1,175 @@
+defaultTasks('clean', 'doGJF','compileTestJava')
+
+buildscript {
+    ext {
+        springVersion = '3.1.2'
+    }
+    repositories {
+        maven {
+            url 'https://plugins.gradle.org/m2/'
+        }
+    }
+    dependencies {
+        classpath('io.spring.gradle:dependency-management-plugin:1.1.2')
+        classpath('gradle.plugin.com.github.sherter.google-java-format:google-java-format-gradle-plugin:0.9')
+    }
+}
+
+group = 'com.github.rsshell'
+
+apply plugin: 'application'
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'maven-publish'
+
+def versionProp = new Properties()
+def versionFileName = "version.properties"
+def springVersion = '3.1.2'
+def junitVersion = '5.10.2'
+def mockitoVersion = '5.11.0'
+def lombokVersion = "1.18.30"
+ext['log4j2.version'] = '2.17.1'
+
+File propsFile = file(versionFileName)
+if (!propsFile.exists()) {
+    propsFile.createNewFile()
+}
+propsFile.withInputStream { versionProp.load(it) }
+
+if (!project.version || project.version == "unspecified") {
+    project.version = "1.0"
+}
+
+versionProp.setProperty("version", project.version.toString())
+versionProp.store(propsFile.newWriter(), null)
+
+jar {
+    manifest {
+        attributes (
+                'Name': "${archiveBaseName}",
+                'Implementation-Version': "${versionProp.version.toString()}"
+        )
+    }
+    from versionFileName
+}
+
+repositories {
+    repositories {
+        mavenCentral()
+    }
+}
+
+dependencies {
+    compileOnly ("org.projectlombok:lombok:$lombokVersion")
+    annotationProcessor ("org.projectlombok:lombok:$lombokVersion")
+
+    implementation('commons-fileupload:commons-fileupload:1.5')
+    implementation('com.veracode.annotation:VeracodeAnnotations:1.2.1')
+    implementation("org.springframework.boot:spring-boot-starter:$springVersion")
+    implementation("org.springframework.shell:spring-shell-starter:$springVersion")
+    implementation("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5")
+    implementation("jakarta.persistence:jakarta.persistence-api:3.1.0")
+    implementation("org.springframework.boot:spring-boot-starter-rsocket:3.1.2")
+    implementation("org.springframework.boot:spring-boot-starter-webflux:3.1.1")
+
+    testCompileOnly ("org.projectlombok:lombok:$lombokVersion")
+    testAnnotationProcessor ("org.projectlombok:lombok:$lombokVersion")
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
+    testImplementation("org.mockito:mockito-core:$mockitoVersion")
+    testImplementation("org.mockito:mockito-junit-jupiter:$mockitoVersion")
+    testImplementation("org.springframework:spring-test:5.3.2")
+    testImplementation("org.powermock:powermock-api-mockito2:2.0.9")
+    testImplementation("uk.org.lidalia:slf4j-test:1.2.0")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.10.0")
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '8.4'
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-Xlint:unchecked'
+    options.deprecation = true
+}
+
+// Using google-java-format jar for two tasks, because the plugin fails in a multi-module gradle-project with JDK 17+.
+task doGJF(type: Exec) {
+    workingDir "$projectDir/../gjf"
+    if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+        commandLine 'cmd', '/c', 'google-java-format.bat', 'format'
+    }
+    else {
+        commandLine './google-java-format.sh', 'format'
+    }
+}
+
+task doGJFV(type: Exec) {
+    workingDir "$projectDir/../gjf"
+    def output = new ByteArrayOutputStream()
+    if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+        it.setStandardOutput(output);
+        commandLine 'cmd', '/c', 'google-java-format.bat', 'verify'
+    }
+    else {
+        commandLine './google-java-format.sh', 'verify'
+    }
+
+    doLast {
+        String printed = it.getStandardOutput().toString()
+        if(printed.contains("not compliant") ) {
+            throw new GradleException(printed + 'Pls run doGJF task.')
+        } else {
+            println printed
+        }
+    }
+}
+
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs.addAll(['-Xlint:deprecation', '-Xlint:unchecked'])
+    doFirst {
+        doGJF
+    }
+}
+
+compileTestJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs.addAll(['-Xlint:deprecation', '-Xlint:unchecked'])
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        // For log level LIFECYCLE
+        events "standardOut", "started", "passed", "skipped", "failed"
+        exceptionFormat "full"
+        showExceptions true
+        showCauses true
+        showStackTraces true
+
+        // For log level DEBUG and INFO
+        debug {
+            events "standardOut", "started", "passed", "skipped", "failed"
+            exceptionFormat "full"
+            showExceptions true
+            showCauses true
+            showStackTraces true
+        }
+
+        info.events = debug.events
+        info.exceptionFormat = debug.exceptionFormat
+
+        afterSuite { desc, result ->
+            if (!desc.parent) { // will match outermost suite
+                def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} passed, ${result.failedTestCount} failed, ${result.skippedTestCount} skipped)"
+                def startItem = '|  ', endItem = '  |'
+                def repeatLength = startItem.length() + output.length() + endItem.length()
+                println('\n' + ('-' * repeatLength) + '\n' + startItem + output + endItem + '\n' + ('-' * repeatLength))
+            }
+        }
+    }
+}

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true">
+
+    <springProperty name="logfile.maxHistory" source="logging.file.maxHistory"/>
+    <springProperty name="logfile.totalSize" source="logging.file.totalSize"/>
+    <springProperty name="logfile.path" source="logging.file.path"/>
+    <springProperty name="logfile.name" source="logging.file.name"/>
+    <springProperty name="logging.pattern" source="logging.pattern"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <Pattern>${logging.pattern}</Pattern>
+        </encoder>
+    </appender>
+
+
+    <appender name="Operational-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logfile.path}/${logfile.name}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>${logfile.path}/${logfile.name}.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>${logfile.maxHistory}</maxHistory>
+            <totalSizeCap>${logfile.totalSize}</totalSizeCap>
+
+        </rollingPolicy>
+        <encoder>
+            <Pattern>${logging.pattern}</Pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="Operational-file"/>
+    </root>
+
+
+    <logger name="Operational-log" level="INFO">
+        <appender-ref ref="Operational-file"/>
+    </logger>
+
+</configuration>

@@ -1,0 +1,190 @@
+buildscript {
+    ext {
+        springBootVersion = '3.1.2'
+    }
+    repositories {
+        maven {
+            url 'https://plugins.gradle.org/m2/'
+        }
+    }
+    dependencies {
+        classpath('io.spring.gradle:dependency-management-plugin:1.1.2')
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion")
+        classpath('gradle.plugin.com.github.sherter.google-java-format:google-java-format-gradle-plugin:0.9')
+        classpath "com.github.node-gradle:gradle-node-plugin:7.0.1"
+    }
+}
+
+apply plugin: 'java-library'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'war'
+apply plugin: 'com.github.node-gradle.node'
+
+springBoot{
+    buildInfo()
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-Xlint:unchecked'
+    options.deprecation = true
+}
+
+bootBuildInfo.mustRunAfter processResources
+resolveMainClassName.dependsOn(npm_run_build)
+
+def versionProp = new Properties()
+def lombokVersion = "1.18.30"
+ext['log4j2.version'] = '2.17.1'
+versionProp.setProperty("version", project.version.toString())
+versionProp.setProperty("warBaseName", project.baseName.toString())
+versionProp.setProperty("jarBaseName", project.baseName.toString())
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    compileOnly ("org.projectlombok:lombok:$lombokVersion")
+    testCompileOnly ("org.projectlombok:lombok:$lombokVersion")
+    annotationProcessor ("org.projectlombok:lombok:$lombokVersion")
+    testAnnotationProcessor ("org.projectlombok:lombok:$lombokVersion")
+
+    implementation("org.springframework.boot:spring-boot-starter:$springBootVersion")
+    implementation("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
+    implementation("org.springframework.boot:spring-boot-starter-actuator:$springBootVersion")
+    implementation("org.springframework.boot:spring-boot-starter-rsocket:$springBootVersion")
+    implementation("org.springframework.boot:spring-boot-starter-webflux:$springBootVersion")
+    implementation("org.springframework.shell:spring-shell-starter:$springBootVersion")
+    implementation('com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5')
+    implementation("org.apache.tomcat.embed:tomcat-embed-el:10.1.10")
+    implementation("com.github.oshi:oshi-core:6.5.0")
+
+    implementation project(':rsstub') //Implements rsstub module.
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '8.4'
+}
+
+war {
+    baseName = "${versionProp.warBaseName.toString()}"
+    destinationDirectory = file "$rootDir/libs"
+    version = ''
+    archiveClassifier = ''
+    manifest {
+        attributes (
+                'Name': "${versionProp.warBaseName.toString()}",
+                'Implementation-Version': "${versionProp.version.toString()}"
+        )
+    }
+}
+
+
+//Using google-java-format jar for two tasks, as the plugin fails in a multi-module gradle-project with JDK 17.
+task doGJF(type: Exec) {
+    workingDir "$projectDir/../gjf"
+    if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+        commandLine 'cmd', '/c', 'google-java-format.bat', 'format'
+    }
+    else {
+        commandLine './google-java-format.sh', 'format'
+    }
+}
+
+task doGJFV(type: Exec) {
+    workingDir "$projectDir/../gjf"
+    def output = new ByteArrayOutputStream()
+    if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+        it.setStandardOutput(output);
+        commandLine 'cmd', '/c', 'google-java-format.bat', 'verify'
+    }
+    else {
+        commandLine './google-java-format.sh', 'verify'
+    }
+
+    doLast {
+        String printed = it.getStandardOutput().toString()
+        if(printed.contains("not compliant") ) {
+            throw new GradleException(printed + 'Pls run doGJF task.')
+        } else {
+            println printed
+        }
+    }
+}
+
+node {
+    version = '14.15.4'
+    npmVersion = '8.1.2'
+    download = true
+}
+
+npm_run_build {
+    doNotTrackState("should always run")
+    inputs.file 'package.json'
+    inputs.file 'package-lock.json'
+
+    outputs.dir 'build'
+}
+
+// War for external JEE container.
+war.mustRunAfter(npm_run_build)
+war.dependsOn(bootJar)
+
+// Spring Boot jar.
+build.dependsOn(npm_run_build)
+processResources.dependsOn(npm_run_build)
+
+bootRun {
+    mainClass = "com.github.rsshell.Application"
+    standardInput = System.in
+}
+
+
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs.addAll(['-Xlint:deprecation', '-Xlint:unchecked'])
+    dependsOn bootBuildInfo
+    doFirst {
+        doGJF
+    }
+}
+
+compileTestJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs.addAll(['-Xlint:deprecation', '-Xlint:unchecked'])
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        // For log level LIFECYCLE
+        events "standardOut", "started", "passed", "skipped", "failed"
+        exceptionFormat "full"
+        showExceptions true
+        showCauses true
+        showStackTraces true
+
+        // For log level DEBUG and INFO
+        debug {
+            events "standardOut", "started", "passed", "skipped", "failed"
+            exceptionFormat "full"
+            showExceptions true
+            showCauses true
+            showStackTraces true
+        }
+
+        info.events = debug.events
+        info.exceptionFormat = debug.exceptionFormat
+
+        afterSuite { desc, result ->
+            if (!desc.parent) { // will match the outermost suite
+                def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} passed, ${result.failedTestCount} failed, ${result.skippedTestCount} skipped)"
+                def startItem = '|  ', endItem = '  |'
+                def repeatLength = startItem.length() + output.length() + endItem.length()
+                println('\n' + ('-' * repeatLength) + '\n' + startItem + output + endItem + '\n' + ('-' * repeatLength))
+            }
+        }
+    }
+}

@@ -1,0 +1,7 @@
+/* When $NODE_ENV not set */
+{
+  "server": {
+    "host": "localhost",
+    "port": "8081"
+  }
+}
