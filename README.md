@@ -9,20 +9,20 @@
 
 
 ## Project Overview
-Spring Boot application in three module Gradle project.
+Spring Boot application in Gradle three modules project.
 
 <ul>
   <li>
     <div>rsstub</div>
-    <div>Library implementing Spring Reactive WebSocket with Spring Shell for implementing custom command.</div>
+    <div>Library implementing Spring Reactive WebSocket with Spring Shell.</div>
   </li>
   <li>
     <div>rsweb</div>
-    <div>Server application on Spring Boot, using rsstub lib and Node.js with Xterm.js. Custom shell command implements OSHI</div>
+    <div>Spring Boot Server application using rsstub module and Xterm.js as a Node.js front-end. Custom shell command implementing OSHI system analysis.</div>
   </li>
   <li>
     <div>rscmd</div>
-    <div>Client Spring Reactive WebSocket command-line application with selectively loaded Spring Boot frameworks.</div>
+    <div>Client Spring Reactive WebSocket command-line application with loaded Spring Boot features.</div>
   </li>
 </ul>
 
@@ -40,11 +40,11 @@ Build with test execution:
 ```
 Only test:
 ```
-./gradlew test  --rerun-tasks
+./gradlew test --rerun-tasks
 ```
 For detailed test log:
 ```
-./gradlew test  --rerun-tasks --info
+./gradlew test --rerun-tasks --info
 ```
 Run web-terminal:
 ```
@@ -57,10 +57,10 @@ Open web-terminal:
 
 Run command line terminal:
 ```
-java -jar  rsweb.jar
+java -jar rscmd-1.0.0.jar
 ```
 
-List built in and custom shell commands:
+List all in-built and custom shell commands:
 ```
 help
 ```
