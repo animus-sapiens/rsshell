@@ -40,36 +40,33 @@ Build with test execution:
 ```
 Only test:
 ```
-./gradlew test
+./gradlew test  --rerun-tasks
 ```
 For detailed test log:
 ```
-./gradlew test --info
+./gradlew test  --rerun-tasks --info
 ```
 Run web-terminal:
 ```
 ./rsweb/gradlew bootRun
-```
-or
-```
-java -jar  rsweb.jar
 ```
 Open web-terminal:
 <p style="text-align: left;">
 <a target="_blank" href=http://localhost>http://localhost</a>
 </p>
 
-List built in and shell commands:
+Run command line terminal:
+```
+java -jar  rsweb.jar
+```
+
+List built in and custom shell commands:
 ```
 help
 ```
 Execute custom shell command:
 ```
 system-info
-```
-Run shell-terminal:
-```
-java -jar rscmd-1.0.0.jar
 ```
 
 ### License
