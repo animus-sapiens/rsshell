@@ -36,19 +36,19 @@ Spring Boot application in Gradle three modules project.
 ### Building and Execution
 Build with test execution:
 ```
-./gradlew build
+gradlew build
 ```
 Only test:
 ```
-./gradlew test --rerun-tasks
+gradlew test --rerun-tasks
 ```
 For detailed test log:
 ```
-./gradlew test --rerun-tasks --info
+gradlew test --rerun-tasks --info
 ```
 Run web-terminal:
 ```
-./rsweb/gradlew bootRun
+rsweb/gradlew bootRun
 ```
 Open web-terminal:
 <p style="text-align: left;">
