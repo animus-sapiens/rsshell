@@ -28,7 +28,7 @@ Spring Boot application in three module Gradle project.
 
 ### Software requirements
 - Java JDK 17+
-- Gradle 7.4+
+- Gradle 8
 - Windows, Linux and macOS specified in
   <a target="_blank" href= https://www.oracle.com/java/technologies/javase/products-doc-jdk17certconfig.html >Oracle JDK 17 Certified System Configurations</a>
   or later.
