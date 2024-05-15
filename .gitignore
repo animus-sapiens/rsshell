@@ -30,3 +30,9 @@ out/
 var/
 log/
 node_modules/
+/rsweb/.gradle/
+/rsstub/.gradle/
+/rscmd/.gradle/
+/rsweb/build/
+/rsstub/build/
+/rscmd/build/
