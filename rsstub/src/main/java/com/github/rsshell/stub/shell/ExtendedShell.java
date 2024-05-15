@@ -18,6 +18,7 @@ public class ExtendedShell extends Shell {
 
   /**
    * Extended shell to handle evaluation.
+   *
    * @param resultHandlerService result handler service
    * @param commandRegistry command registry
    * @param terminal terminal
@@ -39,26 +40,28 @@ public class ExtendedShell extends Shell {
   }
 
   /**
-   * Disables InteractiveShellRunner,i.e. shell standard I/O,
-   * i.e. hides shell's prompt when application runs.
+   * Disables InteractiveShellRunner,i.e. shell standard I/O, i.e. hides shell's prompt when
+   * application runs.
+   *
    * @param inputProvider
    * @throws Exception
    */
   @Override
-  public void run(InputProvider inputProvider) throws Exception{
-    InputProvider dummyInputProvider = new InputProvider() {
-      @Override
-      public Input readInput() {
-        Input nothingReturnInput = new Input() {
+  public void run(InputProvider inputProvider) throws Exception {
+    InputProvider dummyInputProvider =
+        new InputProvider() {
           @Override
-          public String rawText() {
-            return "";
+          public Input readInput() {
+            Input nothingReturnInput =
+                new Input() {
+                  @Override
+                  public String rawText() {
+                    return "";
+                  }
+                };
+            return nothingReturnInput;
           }
         };
-        return nothingReturnInput;
-      }
-    };
     super.run(dummyInputProvider);
   }
-
 }

@@ -5,7 +5,6 @@ import com.github.rsshell.client.helper.TestLogAndAssertionHelper;
 import com.github.rsshell.client.setup.Config;
 import com.github.rsshell.client.ws.RShellRequester;
 import java.util.Scanner;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

@@ -18,8 +18,7 @@ import org.springframework.stereotype.Component;
 @DependsOn("Config")
 public class LogBackConfigurer implements InitializingBean {
   private static final String LOGBACK_CONFIG_FILE = "slf4j.xml";
-  @Autowired
-  Config config;
+  @Autowired Config config;
   private Resource location;
 
   public void setLocation() {
@@ -28,6 +27,7 @@ public class LogBackConfigurer implements InitializingBean {
 
   /**
    * Invoked by the BeanFactory after all bean properties are set.
+   *
    * @throws Exception
    */
   public void afterPropertiesSet() throws Exception {

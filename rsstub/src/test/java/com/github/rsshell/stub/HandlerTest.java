@@ -1,5 +1,7 @@
 package com.github.rsshell.stub;
 
+import static org.mockito.ArgumentMatchers.any;
+
 import com.github.rsshell.stub.shell.ExtendedShell;
 import org.jline.utils.AttributedString;
 import org.junit.jupiter.api.Assertions;
@@ -11,12 +13,9 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.shell.Input;
 
-import static org.mockito.ArgumentMatchers.any;
-
 @ExtendWith(MockitoExtension.class)
 public class HandlerTest {
-  @Mock
-  ExtendedShell shell;
+  @Mock ExtendedShell shell;
   @InjectMocks Handler subject;
 
   @Test

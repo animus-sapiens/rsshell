@@ -11,6 +11,7 @@ import reactor.core.publisher.Mono;
 public class WSHandler extends Handler implements WebSocketHandler {
   /**
    * Fetches and dispatches response per session.
+   *
    * @param session the session to handle
    * @return terminal output
    */

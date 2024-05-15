@@ -45,6 +45,7 @@ public class Handler {
 
   /**
    * Sets up stub-shell.
+   *
    * @param shell
    */
   @Autowired

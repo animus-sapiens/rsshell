@@ -11,6 +11,7 @@ public class Configurator {
 
   /**
    * Returns configurer supporting the property-placeholder element.
+   *
    * @return property-placeholder configurer
    */
   @Bean

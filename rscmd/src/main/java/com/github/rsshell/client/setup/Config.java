@@ -55,9 +55,7 @@ public class Config {
     return APP_PROPERTIES;
   }
 
-  /**
-   * Sets config after instantiation.
-   */
+  /** Sets config after instantiation. */
   @PostConstruct
   private void postConstruct() {
     setConfig(this);

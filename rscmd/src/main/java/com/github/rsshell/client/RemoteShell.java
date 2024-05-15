@@ -3,7 +3,6 @@ package com.github.rsshell.client;
 import com.github.rsshell.client.setup.Config;
 import com.github.rsshell.client.ws.RShellRequester;
 import java.util.Scanner;
-
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 
@@ -16,6 +15,7 @@ public class RemoteShell {
 
   /**
    * Constructor
+   *
    * @param config
    * @param rsRequester
    * @param scanner
