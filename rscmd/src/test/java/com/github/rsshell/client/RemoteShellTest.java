@@ -47,10 +47,10 @@ public class RemoteShellTest {
     subject.open();
     Assertions.assertTrue(
         TestLogAndAssertionHelper.assertLogContains("Client opened", Level.INFO.toInt(), 0));
-    /*Assertions.assertTrue(
+    Assertions.assertTrue(
         TestLogAndAssertionHelper.assertLogContains("success", Level.DEBUG.toInt(), 1));
     Assertions.assertTrue(
-        TestLogAndAssertionHelper.assertLogContains("Client exited", Level.INFO.toInt(), 2));*/
+        TestLogAndAssertionHelper.assertLogContains("Client exited", Level.INFO.toInt(), 2));
   }
 
   @Test

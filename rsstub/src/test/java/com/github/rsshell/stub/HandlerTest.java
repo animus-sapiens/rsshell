@@ -1,7 +1,5 @@
 package com.github.rsshell.stub;
 
-import static org.mockito.ArgumentMatchers.any;
-
 import com.github.rsshell.stub.shell.ExtendedShell;
 import org.jline.utils.AttributedString;
 import org.junit.jupiter.api.Assertions;
@@ -12,6 +10,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.shell.Input;
+
+import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
 public class HandlerTest {
@@ -50,7 +50,6 @@ public class HandlerTest {
             RuntimeException.class,
             () -> subject.executeCommand("help"),
             "Expected subject.open() to throw exception");
-    //Assertions.assertTrue(thrown instanceof RuntimeException);
     Assertions.assertEquals(thrown.getMessage(), "failed to evaluate");
   }
 }

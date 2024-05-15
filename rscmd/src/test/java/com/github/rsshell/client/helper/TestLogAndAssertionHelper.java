@@ -1,5 +1,6 @@
 package com.github.rsshell.client.helper;
 
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.LoggingEvent;
@@ -14,6 +15,7 @@ public class TestLogAndAssertionHelper {
     logWatcher = new ListAppender<>();
     logWatcher.start();
     logger = (Logger) LoggerFactory.getLogger(clazz);
+    logger.setLevel(Level.DEBUG);
     logger.addAppender(logWatcher);
     return logger;
   }
