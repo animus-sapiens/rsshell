@@ -1,6 +1,14 @@
 const config = require('config');
-const port = config.server.port;
-const host = config.server.host;
+let port;
+let host;
+
+if ( Object.hasOwn(config, 'server') ) {
+  port = config.server.port;
+  host = config.server.host;
+} else {
+    port = '8081';
+    host = 'localhost';
+}
 
 import {Terminal} from 'xterm';
 import {WebLinksAddon} from 'xterm-addon-web-links';

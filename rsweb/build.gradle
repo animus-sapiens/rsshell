@@ -11,7 +11,7 @@ buildscript {
         classpath('io.spring.gradle:dependency-management-plugin:1.1.2')
         classpath("org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion")
         classpath('gradle.plugin.com.github.sherter.google-java-format:google-java-format-gradle-plugin:0.9')
-        classpath "com.github.node-gradle:gradle-node-plugin:7.0.2"
+        classpath('com.github.node-gradle.node:com.github.node-gradle.node.gradle.plugin:7.1.0')
     }
 }
 
@@ -41,6 +41,7 @@ versionProp.setProperty("warBaseName", project.baseName.toString())
 versionProp.setProperty("jarBaseName", project.baseName.toString())
 
 repositories {
+    gradlePluginPortal()
     mavenCentral()
     mavenLocal()
 }
@@ -65,7 +66,7 @@ dependencies {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '8.4'
+    gradleVersion = '8.10'
 }
 
 war {
@@ -115,8 +116,8 @@ task doGJFV(type: Exec) {
 }
 
 node {
-    version = '14.15.4'
-    npmVersion = '8.1.2'
+    version = '16.20.2'
+    npmVersion = '8.19.4'
     download = true
 }
 
