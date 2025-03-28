@@ -48,14 +48,14 @@ gradlew test --rerun-tasks --info
 ```
 Run web-terminal:
 ```
-rsweb/gradlew bootRun
+gradlew bootRun
 ```
 Open web-terminal:
 <p style="text-align: left;">
 <a target="_blank" href=http://localhost>http://localhost</a>
 </p>
 
-Run command line terminal:
+Can be run command-line terminal:
 ```
 java -jar rscmd-1.0.0.jar
 ```
