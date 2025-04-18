@@ -52,7 +52,7 @@ gradlew bootRun
 ```
 Open web-terminal:
 <p style="text-align: left;">
-<a target="_blank" href=http://localhost>http://localhost</a>
+<a target="_blank" href=http://localhost:8084>http://localhost:8084</a>
 </p>
 
 Can be run command-line terminal:
